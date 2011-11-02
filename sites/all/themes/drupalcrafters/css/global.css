@@ -1,1 +1,31 @@
 /* This file will hold the main styles for your website. */
+body {
+  background: url(../img/bg-dirt.png) repeat 0 0 #1D1D1D;
+}
+#page {
+  background: url(../img/bg-html-horizon.png) repeat-x 0 0 #1D1D1D;
+}
+#region-content {
+  background-color: #E6EFF4;
+}
+
+#block-user-login {
+
+}
+#block-user-login h2 {
+  display:none;
+}
+#block-user-login .form-item,
+#block-user-login .item-list ul li {
+  float: left;
+}
+#block-user-login .item-list ul li.first {
+  margin: 0;
+}
+#block-user-login .form-item,
+#block-user-login .form-actions {
+  margin: 0;
+}
+#block-user-login .form-actions {
+  padding-top: 20px;
+}
