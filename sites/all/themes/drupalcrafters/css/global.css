@@ -3,7 +3,7 @@ body {
   background: url(../img/bg-dirt.png) repeat 0 0 #1D1D1D;
 }
 #page {
-  background: url(../img/bg-html-horizon.png) repeat-x 0 0 #1D1D1D;
+  background: url(../img/bg-html-horizon.png) repeat-x 0 0 transparent;
 }
 #region-content {
   background-color: #E6EFF4;
