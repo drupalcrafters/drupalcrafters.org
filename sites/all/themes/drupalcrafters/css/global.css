@@ -9,6 +9,10 @@ body {
   background-color: #E6EFF4;
 }
 
+.region {
+  min-height: 1px;
+}
+
 #block-user-login {
 
 }
