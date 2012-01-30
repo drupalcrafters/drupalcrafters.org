@@ -17,11 +17,8 @@ body {
   background: url(../img/bg-html-horizon.png) repeat-x 0 0 transparent;
 }
 
-#columns {
-  box-shadow: rgba(0,0,0,0.4) 0 -1px 0,rgba(255,255,255,0.12) 0 1px 0,inset rgba(0,0,0,0.3) 0 3px 6px;
-  -webkit-box-shadow: rgba(0,0,0,0.4) 0 -1px 0,rgba(255,255,255,0.12) 0 1px 0,inset rgba(0,0,0,0.3) 0 3px 6px;
-  background: transparent;
-  background-image: -webkit-linear-gradient(top,rgba(255,255,255,.6),rgba(247,247,247,.6));
+h1 {
+  color: #000;
 }
 
 a,
@@ -29,4 +26,11 @@ a:link,
 a:visited {
   color: #000;
   text-decoration: underline;
+}
+
+#columns {
+  box-shadow: rgba(0,0,0,0.4) 0 -1px 0,rgba(255,255,255,0.12) 0 1px 0,inset rgba(0,0,0,0.3) 0 3px 6px;
+  -webkit-box-shadow: rgba(0,0,0,0.4) 0 -1px 0,rgba(255,255,255,0.12) 0 1px 0,inset rgba(0,0,0,0.3) 0 3px 6px;
+  background: #FFF;
+  background-image: -webkit-linear-gradient(top,rgba(255,255,255,.6),rgba(247,247,247,.6));
 }
