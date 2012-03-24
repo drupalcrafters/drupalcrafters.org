@@ -43,27 +43,26 @@
       <<?php print $tag; ?> id="main-content" role="main">
 
         <?php print render($title_prefix); ?>
-        <?php if ($title || $primary_local_tasks || $secondary_local_tasks || $action_links = render($action_links)): ?>
-          <header class="clearfix">
-            <?php if ($title): ?>
-              <h1 id="page-title"><?php print $title; ?></h1>
-            <?php endif; ?>
-            <?php if ($primary_local_tasks || $secondary_local_tasks || $action_links): ?>
-              <div id="tasks" class="clearfix">
-                <?php if ($primary_local_tasks): ?>
-                  <ul class="tabs primary clearfix"><?php print render($primary_local_tasks); ?></ul>
-                <?php endif; ?>
-                <?php if ($secondary_local_tasks): ?>
-                  <ul class="tabs secondary clearfix"><?php print render($secondary_local_tasks); ?></ul>
-                <?php endif; ?>
-                <?php if ($action_links = render($action_links)): ?>
-                  <ul class="action-links clearfix"><?php print $action_links; ?></ul>
-                <?php endif; ?>
-              </div>
-            <?php endif; ?>
+        <?php if ($title && !isset($node)): ?>
+          <header>
+            <h1 id="page-title"><?php print $title; ?></h1>
           </header>
         <?php endif; ?>
         <?php print render($title_suffix); ?>
+
+        <?php if ($primary_local_tasks || $secondary_local_tasks || $action_links): ?>
+          <div id="tasks" class="clearfix">
+            <?php if ($primary_local_tasks): ?>
+              <ul class="tabs primary clearfix"><?php print render($primary_local_tasks); ?></ul>
+            <?php endif; ?>
+            <?php if ($secondary_local_tasks): ?>
+              <ul class="tabs secondary clearfix"><?php print render($secondary_local_tasks); ?></ul>
+            <?php endif; ?>
+            <?php if ($action_links = render($action_links)): ?>
+              <ul class="action-links clearfix"><?php print $action_links; ?></ul>
+            <?php endif; ?>
+          </div>
+        <?php endif; ?>
 
         <div id="content"><?php print render($page['content']); ?></div>
 

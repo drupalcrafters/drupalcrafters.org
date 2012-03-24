@@ -51,7 +51,6 @@ h2.block-title {
 #block-search-form .form-item-search-block-form input {
   float: left; /* LTR */
   font-size: 1em;
-  height: 1.143em;
   margin-right: 5px;
   width: 62%;
 }
