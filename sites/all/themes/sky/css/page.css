@@ -33,6 +33,7 @@
 .region-help,
 .messages,
 #main-content > header,
+div#tasks,
 #attribution {
     margin-left: 20px;
     margin-right: 20px;
