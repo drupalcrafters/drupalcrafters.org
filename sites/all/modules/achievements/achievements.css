@@ -8,7 +8,7 @@
   margin: 0.8em auto;
 }
 
-.achievement-hidden,
+.achievement-secret,
 .achievement-locked {
   filter: alpha(opacity=50);
   opacity: 0.5;

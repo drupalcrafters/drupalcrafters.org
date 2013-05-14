@@ -5,6 +5,7 @@ CONTENTS OF THIS FILE
  * Introduction
  * Installation
  * Creating achievements
+ * Optional modules
 
 
 INTRODUCTION
@@ -36,12 +37,13 @@ Current features and design:
    show the latest achievement earned, allowing users to discover new
    milestones they might want to strive for.
 
- * Achievements can be hidden so that a user doesn't know how to unlock
-   it until she stumbles upon the discovery herself (meeting the milestone,
-   asking a user, etc.).
+ * Achievements can be made "secret" (if they're not unlocked, a user will
+   see "Secret Achievement" placeholder text instead of actual data) and/or
+   "invisible" (the achievement doesn't show up on the user's Achievements
+   tab until it's unlocked).
 
  * Achievements can have images (or "badges") in one of three different
-   states: unlocked, locked, or hidden. Default images can be used for all
+   states: unlocked, locked, or secret. Default images can be used for all
    achievements (and some are provided with the module), or you can override
    them on a per-achievement basis.
 
@@ -100,8 +102,26 @@ To begin creating achievements:
      * Telling Drupal about your module: http://drupal.org/node/1075072
      * Implementing your first hook: http://drupal.org/node/1095546
 
- 2. Read about the Achievements API, and some examples, in achievements.api.php.
+ 2. Read about the Achievements API, and examples, in achievements.api.php.
 
  3. Adding new achievements (or changing the info of existing ones) will
     require you to rebuild the internal cache, which you can refresh from
     admin/config/people/achievements.
+
+
+OPTIONAL MODULES
+----------------
+
+Achievements ships with some tweaky and entirely optional modules:
+
+ * OPTOUT: Some folks just plain ol' hate gamification. With the Opt-out
+   module, a new checkbox field is added to the user's edit screen that allows
+   them to opt-out (and back in, if they so desire) from earning achievements.
+
+ * POINTLESS: The Pointless module removes all the explicit competitive
+   elements of achievements. Milestones will no longer display a user's
+   unlock rank or the number of points, and access to the leaderboards is
+   disabled. This creates an environment where the user unlocks achievements
+   for their own gratification, not to simply one-up another user or to get
+   noticed on a nebulous high-score table.
+

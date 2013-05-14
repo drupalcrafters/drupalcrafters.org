@@ -27,7 +27,7 @@ function achievements_settings() {
   $form['achievements_manual']['achievements_manual_user'] = array(
     '#autocomplete_path'  => 'user/autocomplete',
     '#maxlength'          => '60',
-    '#title'              => t('Username'),
+    '#title'              => t('Username or UID'),
     '#type'               => 'textfield',
   );
   $form['achievements_manual']['achievements_manual_achievement'] = array(
@@ -55,26 +55,26 @@ function achievements_settings() {
     '#type'               => 'fieldset',
   );
   $form['achievements_rankings']['achievements_leaderboard_count_per_page'] = array(
-    '#type'           => 'select',
-    '#title'          => t('Number of top ranks per page'),
-    '#default_value'  => variable_get('achievements_leaderboard_count_per_page', 10),
-    '#options'        => drupal_map_assoc(array(5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100)),
+    '#type'               => 'select',
+    '#title'              => t('Number of top ranks per page'),
+    '#default_value'      => variable_get('achievements_leaderboard_count_per_page', 10),
+    '#options'            => drupal_map_assoc(array(5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100)),
   );
   $form['achievements_rankings']['achievements_leaderboard_relative'] = array(
-    '#type'           => 'radios',
-    '#title'          => t('Relative leaderboard display'),
-    '#default_value'  => variable_get('achievements_leaderboard_relative', 'nearby_ranks'),
-    '#options'        => array(
-      'disabled'      => t('Don\'t show the relative leaderboard'),
-      'user_only'     => t('Show only the current user'),
-      'nearby_ranks'  => t('Show the current user and nearby ranks'),
+    '#type'               => 'radios',
+    '#title'              => t('Relative leaderboard display'),
+    '#default_value'      => variable_get('achievements_leaderboard_relative', 'nearby_ranks'),
+    '#options'            => array(
+      'disabled'          => t('Don\'t show the relative leaderboard'),
+      'user_only'         => t('Show only the current user'),
+      'nearby_ranks'      => t('Show the current user and nearby ranks'),
     ),
   );
   $form['achievements_rankings']['achievements_leaderboard_relative_nearby_ranks'] = array(
-    '#type'           => 'select',
-    '#title'          => t('Number of nearby ranks to display'),
-    '#default_value'  => variable_get('achievements_leaderboard_relative_nearby_ranks', 2),
-    '#options'        => drupal_map_assoc(range(1, 10)),
+    '#type'               => 'select',
+    '#title'              => t('Number of nearby ranks to display'),
+    '#default_value'      => variable_get('achievements_leaderboard_relative_nearby_ranks', 2),
+    '#options'            => drupal_map_assoc(range(1, 10)),
   );
 
   $form['achievements_config'] = array(
@@ -82,7 +82,7 @@ function achievements_settings() {
     '#type'               => 'fieldset',
   );
   $module_path = drupal_get_path('module', 'achievements');
-  foreach (array('unlocked', 'locked', 'hidden') as $image_type) {
+  foreach (array('unlocked', 'locked', 'secret') as $image_type) {
     $form['achievements_config']['achievements_image_' . $image_type] = array(
       '#default_value'      => variable_get('achievements_image_' . $image_type, $module_path . '/images/default-' . $image_type . '-70.jpg'),
       '#title'              => t('Default @image_type picture', array('@image_type' => $image_type)),
@@ -110,16 +110,29 @@ function achievements_clear_info_cache_submit() {
  * Submit callback; give or take away an achievement from a user.
  */
 function achievements_manual_submit($form, &$form_state) {
-  $account = user_load_by_name($form_state['values']['achievements_manual_user']);
+  if (empty($form_state['values']['achievements_manual_user'])) { // ZOMG, it's #required, fool!
+    drupal_set_message(t('A username or user ID is required to give or take achievements.'), 'error');
+    return;
+  }
+
+  if (empty($form_state['values']['achievements_manual_achievement'])) { // HITCHCOCK STABBY STAB.
+    drupal_set_message(t('An achievement ID is required to give or take achievements.'), 'error');
+    return;
+  }
+
+  // well, we've got form values, so load 'em in and check for validity.
+  $account = !is_numeric($form_state['values']['achievements_manual_user'])
+    ? user_load_by_name($form_state['values']['achievements_manual_user'])
+    : user_load($form_state['values']['achievements_manual_user']);
   $achievement = achievements_load($form_state['values']['achievements_manual_achievement']);
 
-  if (!$account) { // You failed an autocomplete?! WTH.
+  if (!isset($account->uid) || $account->uid == 0) { // Wha? Who?
     drupal_set_message(t('%username is not a valid user.', // I TRIED TO HELP.
       array('%username' => $form_state['values']['achievements_manual_user'])), 'error');
     return;
   }
 
-  if (!$achievement) { // -100 DKP! That's not even funny anymore.
+  if (!isset($achievement['title'])) { // -100 DKP! That's not even funny anymore.
     drupal_set_message(t('%achievement_id is not a valid achievement.', // M... many whelps?
       array('%achievement_id' => $form_state['values']['achievements_manual_achievement'])), 'error');
     return;
@@ -127,6 +140,12 @@ function achievements_manual_submit($form, &$form_state) {
 
   // if we've a valid user and achievement ID, give 'em the achievement, ya freeloaders.
   if ($account && $achievement && $form_state['clicked_button']['#achievement_action'] == 'give') {
+    if (!user_access('earn achievements', $account)) { // KLAXON KLAXON CHEATAH.
+      drupal_set_message(t('%username does not have permission to earn achievements.',
+        array('%username' => $form_state['values']['achievements_manual_user'])), 'error');
+      return;
+    }
+
     achievements_unlocked($achievement['id'], $account->uid);
     drupal_set_message(t('%username has been given %achievement.', // yeah, yeah.
       array('%username' => $account->name, '%achievement' => $achievement['title'])));

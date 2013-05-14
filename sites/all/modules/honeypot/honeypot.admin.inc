@@ -32,18 +32,19 @@ function honeypot_admin_form($form, &$form_state) {
     $form['configuration']['honeypot_element_name'] = array(
       '#type' => 'textfield',
       '#title' => t('Honeypot element name'),
-      '#description' => t("The name of the Honeypot form field. It's usually most effective to use a generic name like email, homepage, or name, but this should be changed if it interferes with fields that are already in your forms."),
-      '#default_value' => variable_get('honeypot_element_name', 'homepage'),
+      '#description' => t("The name of the Honeypot form field. It's usually most effective to use a generic name like email, homepage, or name, but this should be changed if it interferes with fields that are already in your forms. Must not contain spaces or special characters."),
+      '#default_value' => variable_get('honeypot_element_name', 'url'),
       '#required' => TRUE,
       '#size' => 30,
     );
     $form['configuration']['honeypot_time_limit'] = array(
       '#type' => 'textfield',
       '#title' => t('Honeypot time limit'),
-      '#description' => t('Minimum time required before form should be considered entered by a human instead of a bot. Set to 0 to disable.'),
+      '#description' => t('Minimum time required before form should be considered entered by a human instead of a bot. Set to 0 to disable. <strong>Page caching will be disabled if there is a form protected by time limit on the page.</strong>'),
       '#default_value' => variable_get('honeypot_time_limit', 5),
       '#required' => TRUE,
       '#size' => 5,
+      '#field_suffix' => t('seconds'),
     );
 
   // Honeypot Enabled forms.
@@ -102,6 +103,16 @@ function honeypot_admin_form($form, &$form_state) {
       );
     }
 
+    // If profile.module enabled, add profile forms.
+    if (module_exists('profile')) {
+      $form['enabled_forms']['profile_forms'] = array('#value' => '<h5>' . t('Profile Forms') . '</h5>');
+      $form['enabled_forms']['honeypot_form_user_profile_form'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Profile forms (all)'),
+        '#default_value' => variable_get('honeypot_form_user_profile_form', 0),
+      );
+    }
+
     // Get node types for node forms and node comment forms.
     $types = node_type_get_types();
     if (!empty($types)) {
@@ -117,14 +128,16 @@ function honeypot_admin_form($form, &$form_state) {
       }
 
       // Comment forms.
-      $form['enabled_forms']['comment_forms'] = array('#markup' => '<h5>' . t('Comment Forms') . '</h5>');
-      foreach ($types as $type) {
-        $id = 'honeypot_form_comment_node_' . $type->type . '_form';
-        $form['enabled_forms'][$id] = array(
-          '#type' => 'checkbox',
-          '#title' => t('@name comment form', array('@name' => $type->name)),
-          '#default_value' => variable_get($id, 0),
-        );
+      if (module_exists('comment')) {
+        $form['enabled_forms']['comment_forms'] = array('#markup' => '<h5>' . t('Comment Forms') . '</h5>');
+        foreach ($types as $type) {
+          $id = 'honeypot_form_comment_node_' . $type->type . '_form';
+          $form['enabled_forms'][$id] = array(
+            '#type' => 'checkbox',
+            '#title' => t('@name comment form', array('@name' => $type->name)),
+            '#default_value' => variable_get($id, 0),
+          );
+        }
       }
     }
 
@@ -150,6 +163,11 @@ function honeypot_admin_form_validate($form, &$form_state) {
   }
   else {
     form_set_error('honeypot_time_limit', t("The time limit must be a positive integer or 0."));
+  }
+
+  // Make sure Honeypot element name only contains A-Z, 0-9.
+  if (!preg_match("/^[-_a-zA-Z0-9]+$/", $form_state['values']['honeypot_element_name'])) {
+    form_set_error('honeypot_element_name', t("The element name cannot contain spaces or other special characters."));
   }
 }
 

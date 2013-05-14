@@ -29,9 +29,9 @@
  *   - description: (required) A description of the achievement.
  *   - points: (required) How many points the user will earn when unlocked.
  *   - images: (optional) An array of (optional) keys 'locked', 'unlocked',
- *     and 'hidden' whose values are image file paths. Achievements exist in
+ *     and 'secret' whose values are image file paths. Achievements exist in
  *     three separate display states: unlocked (the user has it), locked (the
- *     user doesn't have it), and hidden (the user doesn't have it, and the
+ *     user doesn't have it), and secret (the user doesn't have it, and the
  *     achievement is a secret). Each state can have its own default image
  *     associated with it (which administrators can configure), or achievements
  *     can specify their own images for one, some, or all states.
@@ -42,7 +42,14 @@
  *     removes an achievement unlock from a user. If your achievement
  *     tracks statistics that are NOT set with achievements_storage_get()
  *     or _set, you don't have to define the 'storage' key.
- *   - hidden: (optional) The achievement is a sekrit until it is unlocked.
+ *   - secret: (optional) The achievement displays on a user's Achievements
+ *     tab but does not reveal its title, description, or points until the
+ *     user has unlocked it. Compatible with 'invisible'.
+ *   - invisible: (optional) The achievement does NOT display on a user's
+ *     Achievements tab, but does show up on the leaderboards when necessary.
+ *     Compatible with 'secret' (i.e., if another user has unlocked an
+ *     invisible achievement, a user who has not unlocked it will see the
+ *     placeholder secret text instead of the actual achievement itself).
  *
  *   Achievements can also be categorized into groups. Groups are simply
  *   arrays whose keys are internal group IDs and whose values identify
@@ -66,7 +73,7 @@ function hook_achievements_info() {
       'points'      => 100,
       'images' => array(
         'unlocked'  => '/sites/default/files/example1.png',
-        // 'hidden' and 'locked' will use the defaults.
+        // 'secret' and 'locked' will use the defaults.
       ),
     ),
 
@@ -84,7 +91,7 @@ function hook_achievements_info() {
           'images' => array(
             'unlocked'  => '/sites/default/files/example1.png',
             'locked'    => '/sites/default/files/example2.png',
-            'hidden'    => '/sites/default/files/example3.png',
+            'secret'    => '/sites/default/files/example3.png',
             // all default images have been replaced.
           ),
         ),
@@ -148,26 +155,6 @@ function example_node_insert($node) {
   if (format_date(REQUEST_TIME, 'custom', 'D') == 'Mon') {
     achievements_unlocked('node-mondays', $node->uid);
   }
-}
-
-/**
- * Implements hook_query_alter().
- *
- * The following database tags have been created for hook_query_alter() and
- * the matching hook_query_TAG_alter(). If you need more than this, don't
- * hesitate to create an issue asking for them.
- *
- * achievement_totals:
- *   Find the totals of all users in ranking order.
- *
- * achievement_totals_user:
- *   Find the totals of the passed user.
- *
- * achievement_totals_user_nearby:
- *   Find users nearby the ranking of the passed user.
- */
-function example_query_alter() {
-  // futz with morbus' logic. insert explosions and singularities.
 }
 
 /**
@@ -242,5 +229,49 @@ function example_achievements_locked($achievement, $uid) {
 function example_achievements_leaderboard_alter(&$leaderboard) {
   if ($leaderboard['type'] == 'first') {
     $leaderboard['render']['#caption'] = t('Congratulations to our first 10!');
+  }
+}
+
+/**
+ * Implements hook_query_alter().
+ *
+ * The following database tags have been created for hook_query_alter() and
+ * the matching hook_query_TAG_alter(). If you need more than this, don't
+ * hesitate to create an issue asking for them.
+ *
+ * achievement_totals:
+ *   Find the totals of all users in ranking order.
+ *
+ * achievement_totals_user:
+ *   Find the totals of the passed user.
+ *
+ * achievement_totals_user_nearby:
+ *   Find users nearby the ranking of the passed user.
+ */
+function example_query_alter(QueryAlterableInterface $query) {
+  // futz with morbus' logic. insert explosions and singularities.
+}
+
+/**
+ * Implements hook_achievements_access_earn().
+ *
+ * Allows you to programmatically determine if a user has access to earn
+ * achievements. We do already have an "earn achievements" permission, but
+ * this allows more complex methods of determining that privilege. For an
+ * example, see the achievements_optout.module, which allows a user to opt-out
+ * of earning achievements, even if you've already granted them permission to.
+ *
+ * @param $uid
+ *   The user ID whose access is being questioned.
+ *
+ * @return
+ *   TRUE if the $uid can earn achievements, FALSE if they can't,
+ *   or NULL if there's no change to the user's default access.
+ */
+function example_achievements_access_earn($uid) {
+  $account = user_load($uid);
+  if ($account->name == 'Morbus Iff') {
+    // always, mastah, alllwayyYAYsss.
+    return TRUE;
   }
 }

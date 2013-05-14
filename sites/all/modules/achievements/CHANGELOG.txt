@@ -1,8 +1,52 @@
 
-Achievements 7.x-1.5, 2011-XX-XX
+Achievements 7.x-1.5, 2012-05-01
 --------------------------------
  * (todo) Add some links for good achievement design?
- * (todo) Allow users to choose if they can opt-out of achievements.
+ * (todo) We have an unindexed query in the two leaderboard functions.
+  * Solve with a new at.sort column, similar to comment.module threading.
+  * Store USER_TOTAL - 0.UNLOCK_YYMMDDHHSS. Sort on that, not at.timestamp.
+     100 points - 0.50 timestamp (really early in life)
+     100 points - 0.99 timestamp (later in life)
+      90 points - 0.10 (the earliest sap, but not a winner)
+
+ * API CHANGE! API CHANGE! API CHANGE! API CHANGE! API CHANGE! API CHANGE!
+  * If you have any 'hidden' type achievements, retype them to 'secret'.
+  * "secret achievement" is more commonly known than "hidden achievement".
+  * "secret" reads better with the newly available "invisible" type (below).
+  * IF YOU DON'T RETYPE, HIDDEN ACHIEVEMENTS WILL BE EXPOSED TO USERS.
+
+ * 'invisible' achievement types can now be created.
+  * These will NOT display on a user's Achievements tab (unless unlocked).
+  * They will display elsewhere as needed (leaderboards, per-page, etc.).
+  * Some possible uses of 'invisible' achievements include:
+   * Tenure-based achievements to thank long-time users, beta testers, etc.
+   * To "reveal" a user's achievements instead of defaulting to all locked.
+  * You can set an achievement to be both 'secret' and 'invisible'.
+   * Makes it invisible on the user's Achievements tab (unless unlocked).
+   * Shows the secret placeholder text when displayed elsewhere.
+ * New hook added: hook_achievements_access_earn().
+  * Allows you to programmatically determine if a user can earn achievements.
+  * See the new submodule, achievements_optout, for an example of its use.
+ * A new and optional submodule is added: achievements_optout.
+  * Adds a new setting to a user's profile to opt-out of achievements.
+  * If selected, all that user's unlocks and statistics are deleted.
+  * If selected, that user's Achievements tab shows them opted-out.
+  * An opted-out user can unselect the checkbox to start earning anew.
+ * A new and optional submodule is added: achievements_pointless.
+  * The module removes all the default competitive elements and display.
+  * With a non-competitive environment, it's about challenging yourself.
+  * All access to leaderboard pages and the default block is disabled.
+  * No ranking information or achievement points are displayed.
+  * user/#/achievements is the sole me-centric interface.
+ * Per-load unlocks cache is now updated after new achievement unlocks.
+ * Accept user IDs as well as names for manual achievement (un)?locking.
+ * If 'points' is left undefined for an achievement, default to 0.
+ * The achievements leaderboard block is no longer cached. Le sigh.
+ * #1230506: Hopefully fixing SQL error for unknown achievement IDs.
+ * #1341546: Mismatched leaderboard length defaults (thanks makononov).
+ * #1373078: Locked achievements leaderboard tweaks (thanks aaronwinborn).
+ * #1396776: Allow unlocked timestamp to be passed (thanks jhedstrom).
+ * #1508572: Check earn access before admin give (thanks Royce Kimmons).
 
 
 Achievements 7.x-1.4, 2011-11-10

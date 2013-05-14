@@ -137,7 +137,7 @@ function achievements_schema() {
  * Implements hook_uninstall().
  */
 function achievements_uninstall() {
-  variable_del('achievements_image_hidden');
+  variable_del('achievements_image_secret');
   variable_del('achievements_image_locked');
   variable_del('achievements_image_unlocked');
   variable_del('achievements_leaderboard_block_count_top');
@@ -186,3 +186,20 @@ function achievements_update_7101() {
     db_update('achievement_totals')->fields(array('achievement_id' => $achievement_id))->condition('uid', $achiever->uid)->execute();
   }
 }
+
+/**
+ * Rename the "hidden" achievement variable to "secret".
+ */
+function achievements_update_7102() {
+  $module_path = drupal_get_path('module', 'achievements');
+  if (variable_get('achievements_image_hidden', NULL) == $module_path . '/images/default-hidden-70.jpg') {
+    variable_set('achievements_image_secret', $module_path . '/images/default-secret-70.jpg');
+  }
+  else {
+    variable_set('achievements_image_secret', variable_get('achievements_image_hidden'));
+  }
+
+  variable_del('achievements_image_hidden'); // Send a warning to the administrator just in case they haven't seen the CHANGELOG.
+  drupal_set_message(t('"hidden" achievements MUST be retyped to "secret" else they will be exposed. See CHANGELOG.txt for more information.'), 'warning');
+}
+
