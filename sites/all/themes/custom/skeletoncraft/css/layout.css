@@ -135,10 +135,7 @@ h1#site-name a,
   display: block;
   margin-bottom: 14px;
   color: #FFF;
-}
-
-#site-name strong a {
-  font-size: 2em;
+  font-size: 32px;
 }
 
 #top-navigation {
