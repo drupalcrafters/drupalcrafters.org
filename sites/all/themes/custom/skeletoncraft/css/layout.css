@@ -137,6 +137,10 @@ h1#site-name a,
   color: #FFF;
 }
 
+#site-name strong a {
+  font-size: 2em;
+}
+
 #top-navigation {
   background: none repeat scroll 0 0 #000;
   display: table;
