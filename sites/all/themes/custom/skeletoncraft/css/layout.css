@@ -129,8 +129,8 @@ h5.slogan {
   color: #FFF;
 }
 
-h1#site-name a,
-strong#site-name  a span{
+h1#site-name,
+#site-name strong a{
   font-size: 2em;
   line-height: 1em;
   color: #0A4C7E;
