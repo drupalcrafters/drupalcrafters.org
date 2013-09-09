@@ -123,9 +123,8 @@ div#footer a {
 }
 
 
-h5.slogan {
-  margin-top: 36px;
-  font-size: 18px;
+#site-slogan {
+  font-size: 1.2em;
   color: #FFF;
 }
 
