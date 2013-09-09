@@ -128,7 +128,7 @@ div#footer a {
   color: #FFF;
 }
 
-h1#site-name,
+h1#site-name a,
 #site-name strong a{
   font-size: 2em;
   line-height: 1em;
