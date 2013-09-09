@@ -135,10 +135,7 @@ h1#site-name,
   line-height: 1em;
   color: #0A4C7E;
   font-weight: normal;
-}
-
-#site-name strong a {
-  margin-bottom: 14px;
+  display: block;
 }
 
 #top-navigation {
